@@ -1,0 +1,111 @@
+
+  <div class="row m-y-20">
+    <div class="col-2">
+
+      <mat-form-field appearance="fill">
+        <mat-label>Select Year</mat-label>
+        <mat-select [disableOptionCentering]="true" (ngModelChange)="changeYear($event)" [(ngModel)]="selectedYear">
+          <mat-option *ngFor="let year of years" [value]="year">
+            {{year}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+    <div class="col-3">
+
+      <mat-form-field appearance="fill">
+        <mat-label>Select Rule</mat-label>
+        <mat-select [disableOptionCentering]="true" multiple (ngModelChange)="changePrefrence($event)" [(ngModel)]="selectedPrefrence">
+          <mat-option *ngFor="let prefrence of prefrenceList" [value]="prefrence.name" checked="true">
+            {{prefrence.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+    <div class="col-7" >
+      <div class="box">
+        <span class="tube" *ngFor="let prefrence of selectedPrefrence"> {{prefrence}} <a href="javascript:void(0)" class="close" (click)="remove(prefrence)">&#10006;</a></span>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card-container">
+        <ycd-example-section (sendYearChanged)="sendYearChanged($event)" [year]="selectedYear" [prefrence]="selectedPrefrenceList" (dateSelected)="dateSelected($event)" >
+        </ycd-example-section>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12 btn-container">
+      <button type="button" data-bs-toggle="modal" data-bs-target="#disbaleConfirmationModal" class="btn btn-secondary">Disable</button>
+      <button type="button" (click)="cancel()" class="btn btn-secondary">Cancel</button>
+      <button type="button" data-bs-toggle="modal" data-bs-target="#confirmationPopup" *ngIf="edit" class="btn btn-dark">Update</button>
+      <button type="button" data-bs-toggle="modal" data-bs-target="#confirmationPopup" *ngIf="!edit" class="btn btn-dark">Save</button>
+      <button type="button" (click)="generate()" class="btn btn-dark generate">Generate</button>
+    </div>
+  </div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="confirmationPopup" #confirmationModal tabindex="-1" aria-labelledby="confirmationPopup" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h2 class="modal-title m-0" id="confirmationPopupTitle">Submit Calender</h2>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <form [formGroup]="form">
+          <div class="modal-body">
+
+              <mat-form-field class="full-width" appearance="fill">
+                  <mat-label>Calender Name</mat-label>
+                  <input *ngIf="!edit" matInput placeholder="" formControlName="name">
+                  <input *ngIf="edit" matInput placeholder="" formControlName="name">
+                  <mat-error *ngIf="form.get('name').hasError('required')">
+                      Calender Name is required.
+                  </mat-error>
+              </mat-form-field>
+
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" [disabled]="!form.valid" (click)="save()" *ngIf="!edit" class="btn btn-dark">Save Calender</button>
+              <button type="button" [disabled]="!form.valid" (click)="update()" *ngIf="edit"  class="btn btn-dark">Update Calender</button>
+
+          </div>
+          </form>
+      </div>
+  </div>
+</div>
+
+<!--Rule disable Modal -->
+<div class="modal fade" id="disbaleConfirmationModal" #disbaleConfirmationModal tabindex="-1" aria-labelledby="disbaleConfirmationModal" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h2 class="modal-title m-0" id="disbaleConfirmationModalTitle">Disable Calendar</h2>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+
+              <span>Are you sure, you want to disable {{form.value.name}}?</span>
+
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" (click)="disableCalendarConfirm()" class="btn btn-dark">Ok</button>
+          </div>
+      </div>
+  </div>
+</div>
